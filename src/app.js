@@ -12,10 +12,10 @@ const facilitiesRouter = require('./routes/facilities');
 const navigationRouter = require('./routes/navigation');
 const notificationsRouter = require('./routes/notifications');
 
-// Rate limiter applied to all API routes to prevent abuse.
-const apiLimiter = rateLimit({
+// Global rate limiter – covers all routes including the SPA catch-all.
+const globalLimiter = rateLimit({
   windowMs: 60 * 1000,  // 1 minute
-  max: 200,             // max 200 requests per IP per window
+  max: 300,             // max 300 requests per IP per window
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -23,11 +23,11 @@ const apiLimiter = rateLimit({
 function createApp() {
   const app = express();
 
+  app.use(globalLimiter);
   app.use(cors());
   app.use(express.json());
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
-  app.use('/api', apiLimiter);
   app.use('/api/zones', zonesRouter);
   app.use('/api/facilities', facilitiesRouter);
   app.use('/api/navigation', navigationRouter);

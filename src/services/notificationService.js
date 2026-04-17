@@ -8,7 +8,9 @@ let nextId = 1;
 /**
  * Notification severity levels.
  */
-const SEVERITY = Object.freeze({ info: 'info', warning: 'warning', critical: 'critical' });
+const SEVERITY = Object.freeze(
+  Object.fromEntries(['info', 'warning', 'critical'].map((s) => [s, s]))
+);
 
 /**
  * Add a new notification.
