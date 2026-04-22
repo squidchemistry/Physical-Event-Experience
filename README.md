@@ -2,6 +2,8 @@
 
 A **real-time venue coordination platform** that improves the physical event experience for attendees at large-scale sporting venues. The system tackles crowd movement, waiting times, and real-time coordination through a live web dashboard and a REST + WebSocket API.
 
+![CI](https://github.com/squidchemistry/Physical-Event-Experience/actions/workflows/ci.yml/badge.svg)
+
 ---
 
 ## Features
@@ -38,11 +40,14 @@ Physical-Event-Experience/
 │   ├── index.html             # Attendee-facing SPA
 │   ├── css/styles.css         # Dark-themed, mobile-first UI
 │   └── js/app.js              # Frontend – Socket.IO + REST client
-└── tests/
-    ├── venueService.test.js
-    ├── navigationService.test.js
-    ├── notificationService.test.js
-    └── api.test.js
+├── tests/
+│   ├── venueService.test.js
+│   ├── navigationService.test.js
+│   ├── notificationService.test.js
+│   └── api.test.js
+├── Dockerfile
+├── docker-compose.yml
+└── .env.example
 ```
 
 ---
@@ -59,11 +64,18 @@ Physical-Event-Experience/
 npm install
 ```
 
+### Configure environment
+
+```bash
+cp .env.example .env
+# Edit .env as needed (defaults work out of the box)
+```
+
 ### Run
 
 ```bash
 npm start
-# Server running on http://localhost:3000
+# Server running on http://0.0.0.0:3000
 ```
 
 Open `http://localhost:3000` in your browser to view the live dashboard.
@@ -76,9 +88,63 @@ npm test
 
 ---
 
+## Deployment
+
+### Docker (recommended)
+
+```bash
+# Build and start with Docker Compose
+docker compose up --build -d
+
+# Check service health
+docker compose ps
+
+# View logs
+docker compose logs -f
+
+# Stop
+docker compose down
+```
+
+The container exposes port **3000** and includes a built-in health check at `GET /api/health`.
+
+### Manual / PaaS
+
+Any platform that can run a Node.js process works out of the box:
+
+```bash
+npm ci --omit=dev
+NODE_ENV=production PORT=3000 node server.js
+```
+
+**Environment variables**
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `3000` | HTTP listen port |
+| `HOST` | `0.0.0.0` | Bind address |
+| `NODE_ENV` | *(unset)* | Set to `production` on live deployments |
+
+### CI / CD
+
+Every push and pull request triggers the GitHub Actions workflow (`.github/workflows/ci.yml`) which:
+
+1. Runs the test suite on Node.js 18, 20, and 22.
+2. Builds the Docker image to verify the `Dockerfile` is valid.
+
+To deploy automatically, add a job that logs in to your container registry and pushes the image after a successful build.
+
+---
+
 ## REST API
 
 All endpoints return JSON. Clients should `Content-Type: application/json` on write requests.
+
+### Health
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/health` | Service health check – returns `{ status: "ok", timestamp }` |
 
 ### Zones
 
@@ -136,3 +202,4 @@ The server broadcasts the following Socket.IO events:
 ## License
 
 ISC
+

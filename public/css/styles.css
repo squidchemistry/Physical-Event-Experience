@@ -164,6 +164,10 @@ button { cursor: pointer; font-family: inherit; }
 .map-legend__dot {
   width: 10px; height: 10px; border-radius: 50%;
 }
+.map-legend__dot--low      { background: var(--density-low); }
+.map-legend__dot--moderate { background: var(--density-moderate); }
+.map-legend__dot--high     { background: var(--density-high); }
+.map-legend__dot--critical { background: var(--density-critical); }
 
 /* --- Wait times list ----------------------------------- */
 .wait-list { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
