@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log*
+coverage/
+dist/
+.env
+.env.*
+tests/
+*.test.js
+.git
+.gitignore
+.github
+docker-compose*.yml
+README.md

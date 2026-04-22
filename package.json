@@ -7,6 +7,10 @@
     "start": "node server.js",
     "test": "jest --testPathPatterns=tests/ --forceExit"
   },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/squidchemistry/Physical-Event-Experience.git"
@@ -23,6 +27,7 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

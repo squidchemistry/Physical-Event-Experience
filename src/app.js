@@ -4,6 +4,7 @@ const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const helmet = require('helmet');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 
@@ -23,10 +24,28 @@ const globalLimiter = rateLimit({
 function createApp() {
   const app = express();
 
+  // Security headers
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc:  ["'self'"],
+          connectSrc: ["'self'", 'ws:', 'wss:'],
+        },
+      },
+    })
+  );
   app.use(globalLimiter);
   app.use(cors());
   app.use(express.json());
   app.use(express.static(path.join(__dirname, '..', 'public')));
+
+  // Health-check endpoint – used by container orchestrators and load balancers.
+  app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   app.use('/api/zones', zonesRouter);
   app.use('/api/facilities', facilitiesRouter);
